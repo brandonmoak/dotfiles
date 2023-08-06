@@ -33,7 +33,9 @@ setup_window
 setup_prompt
 
 # git auto completion
-source /usr/share/bash-completion/completions/git
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
+fi
 
 # python 2.7.12
 alias python2.7.12="/usr/local/lib/python2.7.12/bin/python"

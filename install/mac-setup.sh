@@ -38,3 +38,12 @@ case $(ask_install "upgrade bash") in
   no )echo "skipping";;
   * ) echo "invalid... skipping";;
 esac
+
+case $(ask_install "git completion") in
+  yes )
+    curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
+    chmod +x ~/.git-completion.bash
+    echo "done";;
+  no )echo "skipping";;
+  * ) echo "invalid... skipping";;
+esac
