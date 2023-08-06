@@ -1,0 +1,13 @@
+# script that gets sourced after the  'unlock' command has been run
+
+# load the virtual environments (defined in ~/.rcfunctions)
+load_virtual_envs "/home/brandon/workspace/env"
+
+# load the catkin workspace (defined in ~/.rcfunctions)
+load_catkin_ws "/home/brandon/workspace/catkin_ws"
+
+# add the sources folder to path
+add_to_path "/home/brandon/workspace/sources/bin"
+
+# copy dotfiles to dropbox (defined in ~/.rcfunctions)
+copy_dotfiles_to_dropbox "/home/brandon/.dropbox-ln/Workspace/dotfiles"

@@ -1,0 +1,63 @@
+# cd
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
+# tmux
+alias tmux="tmux -2"
+alias ta="tmux attach -t"
+alias ts="tmux switch -t"
+alias tnew="tmux new -s"
+alias tls="tmux ls"
+alias tkill="tmux kill-session -t"
+alias tstart="tmux start"
+
+# ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# powersave
+alias powerlow='sudo pm-powersave true'
+alias powerhigh='sudo pm-powersave false'
+
+# general linux
+alias sourcerc="source ~/.bashrc"
+alias vimrc="vim ~/.bashrc; sourcerc"
+alias chrome='google-chrome'
+alias launch='xdg-open'
+alias suspend='systemctl suspend -i'
+
+# networking
+function iftoggle () { sudo ifdown $1; sudo ifup $1; }
+
+# clear
+alias cl='clear'
+
+# remove system crash
+alias rmcrash="sudo rm /var/crash/*"
+
+# tar
+alias untar='tar -xvf'
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# github
+function gclone {
+  git clone git@github.com:$1
+}
+
+# kill commands with grep
+function grepkill(){ kill -9 $(ps aux | grep $1 | awk '{print$2}') ;}
+
+# ros
+alias recho='rostopic echo'
+

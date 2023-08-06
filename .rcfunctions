@@ -1,0 +1,301 @@
+# file contains a bunch of functions to be used in the bashrc
+
+function please() {
+   cmd=$(history | cut -c 8- | tail -2 | head -1)
+   sudo $cmd
+}
+
+# function to properly setup my history
+function setup_history() {
+  # don't put duplicate lines or lines starting with space in the history.
+  # See bash(1) for more options
+  HISTCONTROL=ignoreboth
+
+  # append to the history file, don't overwrite it
+  shopt -s histappend
+
+  # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+  HISTSIZE=1000
+  HISTFILESIZE=2000
+}
+
+# function to properly setup window
+function setup_window() {
+  # check the window size after each command and, if necessary,
+  # update the values of LINES and COLUMNS.
+  shopt -s checkwinsize
+}
+
+# setup ros
+function load_ros() {
+  # source ros
+  source /opt/ros/kinetic/setup.bash
+  # ROS functions
+  function seturi(){ export ROS_MASTER_URI="http://$1" ; }
+  function geturi(){ 	echo $ROS_MASTER_URI ; }
+
+  alias rossimon='rosparam set use_sim_time true'
+  alias rossimoff='rosparam set use_sim_time false'
+
+  seturi localhost:11311
+}
+
+function set_docker_uri() {
+  docker_hash=$(docker ps -alq)
+  echo hash $docker_hash
+  echo $1
+  echo $#
+  if [ -z $# ]; then
+    docker_hash=$1
+  fi
+  echo hash $docker_hash
+  docker_ip=$(docker container exec "$docker_hash" cat /etc/hosts | tail -1 | grep -Pom 1 '[0-9.]{7,15}')
+  seturi $docker_ip:11311
+}
+
+# function to add a folder to path
+function add_to_path() {
+  export PATH=$PATH:$1
+}
+
+# load virtual environment
+function load_virtual_envs () {
+  export WORKON_HOME="$1"
+  source /usr/local/bin/virtualenvwrapper.sh
+}
+
+# load catkin_ws (takes the workspace location as an input)
+function load_catkin_ws () {
+  # catkin workspace
+  export CATKIN_SPACE="$1"
+
+  # catkin workspace
+  source $CATKIN_SPACE/devel/setup.sh
+
+  # load useful aliases
+  alias cm='(cd $CATKIN_SPACE;catkin_make -DCMAKE_BUILD_TYPE=Release -DCATKIN_WHITELIST_PACKAGES="" -DCATKIN_BLACKLIST_PACKAGES="")'
+  alias cmc='(rm -r $CATKIN_SPACE/build/* $CATKIN_SPACE/devel/lib $CATKIN_SPACE/devel/share $CATKIN_SPACE/devel/include)'
+}
+
+# tools to setup the encrypted userspace
+function load_encfs_utils() {
+  # get the unlockrc as an argument
+  UNLOCKRC="$1"
+
+  alias cd='HOME=/home/brandon/workspace cd'
+  DECRYPT_DIR="/home/brandon/workspace"
+  ENCRYPT_DIR='/home/brandon/.dropbox-ln/Workspace/brandon-linux'
+
+  # useful aliases for locking and unlocking
+  alias lock="fusermount -u $DECRYPT_DIR"
+  alias unlock="encfs $ENCRYPT_DIR $DECRYPT_DIR -- -o allow_root && source $UNLOCKRC || echo Failed"
+
+  # if we are unlocked, than source the unlockrc
+  if grep -q "encfs $DECRYPT_DIR" /etc/mtab ; then
+    source $UNLOCKRC
+  fi
+}
+
+# function to copy dotfiles to dropbox
+function copy_dotfiles_to_dropbox() {
+  DOTFILE_DIR="$1"
+  cp $HOME/.bashrc      $DOTFILE_DIR
+  cp $HOME/.vimrc       $DOTFILE_DIR
+  cp $HOME/.tmux.conf   $DOTFILE_DIR
+  cp $HOME/.profile     $DOTFILE_DIR
+  cp $HOME/.unlockrc    $DOTFILE_DIR
+  cp $HOME/.gitconfig   $DOTFILE_DIR
+  cp $HOME/.aliases     $DOTFILE_DIR
+  cp $HOME/.rcfunctions $DOTFILE_DIR
+}
+
+# Function to determine the name of the current git branch
+gitbranch() {
+    export GITBRANCH=""
+
+    local repo="${_GITBRANCH_LAST_REPO-}"
+    local gitdir=""
+    [[ ! -z "$repo" ]] && gitdir="$repo/.git"
+    local cur="$PWD"
+
+    # search upwards for a git repo
+    while [[ ! -z "$cur" ]]; do
+        if [[ -e "$cur/.git" ]]; then
+            repo="$cur"
+            gitdir="$cur/.git"
+            break
+        fi
+        cur="${cur%/*}"
+    done
+
+    if [[ -z "$cur" ]]; then
+        unset _GITBRANCH_LAST_REPO
+        return 0
+    fi
+    export _GITBRANCH_LAST_REPO="${repo}"
+    local head=""
+    local branch=""
+    local headfile="$gitdir/HEAD"
+
+    # check to see if we are in a submodule
+    if [ ! -f "$gitdir/HEAD" ]; then
+        # read the .git file to find the real .git folder
+        dot_git=$(<"$gitdir")
+        # read in the location of the actual .git folder
+        headfile=$repo/$(sed -e 's#.*\ \(\)#\1#' <<< "$dot_git")/HEAD
+    fi
+
+    read head < "$headfile"
+    case "$head" in
+        ref:*)
+            branch="${head##*/}"
+            ;;
+        "")
+            branch=""
+            ;;
+        *)
+            branch="d:${head:0:7}"
+            ;;
+    esac
+    if [[ -z "$branch" ]]; then
+        return 0
+    fi
+    export GITBRANCH="$branch"
+}
+
+# my prompt
+PS1_green='\[\e[32m\]'
+PS1_blue='\[\e[34m\]'
+PS1_reset='\[\e[0m\]'
+_mk_prompt() {
+    # Change the window title of X terminals
+    case $TERM in
+        xterm*|rxvt*|Eterm)
+            echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"
+           ;;
+        screen)
+            echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\033\\"
+          ;;
+    esac
+
+    # Un-screw virtualenv stuff
+    if [[ ! -z "${_OLD_VIRTUAL_PS1-}" ]]; then
+        export PS1="$_OLD_VIRTUAL_PS1"
+        unset _OLD_VIRTUAL_PS1
+    fi
+
+    if [[ -z "${_MK_PROMPT_ORIG_PS1-}" ]]; then
+        export _MK_PROMPT_ORIG_PS1="$PS1"
+    fi
+
+    local prefix=()
+    local jobcount="$(jobs -p | wc -l)"
+    if [[ "$jobcount" -gt 0 ]]; then
+        local job="${jobcount##* } job"
+        [[ "$jobcount" -gt 1 ]] && job="${job}s"
+        prefix+=("$job")
+    fi
+
+    gitbranch
+    if [[ ! -z "$GITBRANCH" ]]; then
+        prefix+=("${PS1_green}$GITBRANCH${PS1_reset}")
+    fi
+
+    local virtualenv="${VIRTUAL_ENV##*/}"
+    #local virtualenv=$VIRTUALENVWRAPPER_VIRTUALENV
+    if [[ ! -z "$virtualenv" ]]; then
+        prefix+=("${PS1_blue}$virtualenv${PS1_reset}")
+    fi
+
+    PS1="$_MK_PROMPT_ORIG_PS1"
+    if [[ ! -z "$prefix" ]]; then
+        PS1="[${prefix[@]}] $PS1"
+    fi
+
+    export PS1
+}
+
+# set the prompt
+function setup_prompt() {
+  # set variable identifying the chroot you work in (used in the prompt below)
+  if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+      debian_chroot=$(cat /etc/debian_chroot)
+  fi
+
+  # set a fancy prompt (non-color, unless we know we "want" color)
+  case "$TERM" in
+      xterm-color) color_prompt=yes;;
+  esac
+
+  force_color_prompt=yes
+
+  if [ -n "$force_color_prompt" ]; then
+      if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+    color_prompt=yes
+      else
+    color_prompt=
+      fi
+  fi
+
+  # Colors for the promptscp
+  blue="\033[0;34m"
+  white="\033[0;37m"
+  green="\033[0;32m"
+  light_green="\033[0;92m"
+  light_blue="\033[0;95m"
+  ps1_blue='\['"$blue"'\]'
+  ps1_green='\['"$green"'\]'
+  ps1_lgreen='\['"$light_green"'\]'
+  ps1_lblue='\['"$light_blue"'\]'
+  ps1_white='\['"$white"'\]'
+
+  # No color:
+  # export PS1="@\h:\W\$(parse_git_branch) \$ "
+  if [ "$color_prompt" = yes ]; then
+      PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+      PS1="$ps1_lblue\h:$ps1_white\W$ps1_white\$ "
+  else
+      PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+      PS1="$ps1_lblue\h:$ps1_white\W$ps1_white\$ "
+  fi
+  unset color_prompt force_color_prompt
+
+  # If this is an xterm set the title to user@host:dir
+  case "$TERM" in
+  xterm*|rxvt*)
+      PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+      ;;
+  *)
+      ;;
+  esac
+
+  # export the prompt
+  export PS1
+  export PROMPT_COMMAND=_mk_prompt
+}
+
+load_dropbox_bag_utils() {
+  DROPBOX_LOCATION=$1
+  TRUCKBAGS="$DROPBOX_LOCATION/Truck/truck"
+  # function that lists all of the truck bags
+  ls_truck_bags() { ls $TRUCKBAGS$1 ; }
+
+  # play in order the bag files from the grep command
+  function dropbox-play() {
+    truck=$1
+    grepper=$2
+    extrargs="${*:3}"
+    bags_to_play=$(find "$TRUCKBAGS""$truck" | sort -f | grep $grepper)
+
+    # random color related stuff
+    RED='\033[0;31m'
+    NC='\033[0m'
+
+    for i in $bags_to_play;
+    do
+      printf "${RED}playing bag: $i ${NC}\n"
+      rosbag play $i $extrargs --skip-empty 1
+    done
+  }
+}
+
