@@ -1,0 +1,38 @@
+
+# HELPFUL COMMANDS
+
+# WORKSPACES
+alias aws-workspace-list='aws workspaces describe-workspaces --query "Workspaces[*].{ID:WorkspaceId, User:UserName, State:State, Directory:DirectoryId}" --output table'
+
+aws-workspace-stop() {
+    aws workspaces stop-workspaces --stop-workspace-requests WorkspaceId="$1"
+}
+
+aws-workspace-start() {
+    aws workspaces start-workspaces --start-workspace-requests WorkspaceId="$1"
+}
+
+aws-workspace-count-running() {
+    aws workspaces describe-workspaces --query "Workspaces[?State=='AVAILABLE'].WorkspaceId" --output text | wc -l | tr -d ' '
+}
+
+# INSTANCES
+alias aws-instance-list="aws ec2 describe-instances --query \"Reservations[*].Instances[*].{Name: Tags[?Key=='Name'].Value | [0], ID: InstanceId, Status: State.Name, IP: PublicIpAddress}\" --output table"
+
+aws-instance-stop() {
+    aws ec2 stop-instances --instance-ids "$1"
+}
+
+aws-instance-start() {
+    aws ec2 start-instances --instance-ids "$1"
+}
+
+aws-instance-count-running() {
+    aws ec2 describe-instances --query "Reservations[*].Instances[*].[State.Name]" --filters "Name=instance-state-name,Values=running" --output text | wc -l | tr -d ' '
+}
+
+# aws jupyter notebook
+NOTEBOOK_PEM="~/.ssh/notebook.pem"
+NOTEBOOK_IP="ec2-34-220-9-130.us-west-2.compute.amazonaws.com"
+alias ssh-notebook="ssh -i $NOTEBOOK_PEM ubuntu@$NOTEBOOK_IP"
+alias connect-notebook="ssh -i $NOTEBOOK_PEM -N -f -L 8888:localhost:8888 ubuntu@$NOTEBOOK_IP"
