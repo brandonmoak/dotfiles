@@ -23,6 +23,11 @@ if [ -f ~/.aliases ]; then
   source ~/.aliases
 fi
 
+# aliases
+if [ -f ~/.aws-aliases ]; then
+  source ~/.aws-aliases
+fi
+
 # configure history (defined in ~/.rcfucntions)
 setup_history
 

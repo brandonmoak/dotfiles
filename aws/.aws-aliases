@@ -33,6 +33,7 @@ aws-instance-count-running() {
 
 # aws jupyter notebook
 NOTEBOOK_PEM="~/.ssh/notebook.pem"
-NOTEBOOK_IP="ec2-34-220-9-130.us-west-2.compute.amazonaws.com"
-alias ssh-notebook="ssh -i $NOTEBOOK_PEM ubuntu@$NOTEBOOK_IP"
-alias connect-notebook="ssh -i $NOTEBOOK_PEM -N -f -L 8888:localhost:8888 ubuntu@$NOTEBOOK_IP"
+forward-notebook() {
+    ssh -i $1 -N -f -L 8888:localhost:8888 ubuntu@$2
+}
+#alias connect-notebook="ssh -i $NOTEBOOK_PEM -N -f -L 8888:localhost:8888 ubuntu@$NOTEBOOK_IP"

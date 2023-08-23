@@ -7,5 +7,6 @@ cp -i $SCRIPT_DIR/../dotfiles/.tmux.conf $HOME/.tmux.conf
 cp -i $SCRIPT_DIR/../dotfiles/mac.bashrc  $HOME/.bashrc
 cp -i $SCRIPT_DIR/../dotfiles/.rcfunctions $HOME/.rcfunctions
 cp -i $SCRIPT_DIR/../dotfiles/.aliases $HOME/.aliases
+cp -i $SCRIPT_DIR/../aws/.aws-aliases $HOME/.aws-aliases
 
 
