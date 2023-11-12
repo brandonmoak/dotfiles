@@ -3,6 +3,8 @@ case $- in
       *) return;;
 esac
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # enable bash completion in interactive shells
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -14,18 +16,18 @@ fi
 
 # If not running interactively, don't do anything
 # get the functions to setup bashrc
-if [ -f ~/.rcfunctions ]; then
-  source ~/.rcfunctions
+if [ -f $SCRIPT_DIR/.rcfunctions ]; then
+  source $SCRIPT_DIR/.rcfunctions
 fi
 
 # aliases
-if [ -f ~/.aliases ]; then
-  source ~/.aliases
+if [ -f $SCRIPT_DIR/.aliases ]; then
+  source $SCRIPT_DIR/.aliases
 fi
 
 # aliases
-if [ -f ~/.aws-aliases ]; then
-  source ~/.aws-aliases
+if [ -f $SCRIPT_DIR/.aws-aliases ]; then
+  source $SCRIPT_DIR/.aws-aliases
 fi
 
 # configure history (defined in ~/.rcfucntions)
@@ -49,3 +51,6 @@ alias python2.7.12="/usr/local/lib/python2.7.12/bin/python"
 alias jupyterhost="jupyter notebook --NotebookApp.token= --no-browser --port 8889"
 alias jupytersbox="ssh -N -f -L localhost:8899:localhost:8889 brandon@$SBOXIP; google-chrome http://localhost:8899"
 
+
+source /Users/brandonmoak/.embite/source.sh
+export PATH="/opt/homebrew/bin:$PATH"

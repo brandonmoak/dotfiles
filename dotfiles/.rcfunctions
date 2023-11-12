@@ -58,11 +58,25 @@ function add_to_path() {
   export PATH=$PATH:$1
 }
 
-# load virtual environment
-function load_virtual_envs () {
-  export WORKON_HOME="$1"
-  source /usr/local/bin/virtualenvwrapper.sh
-}
+ # virtual environment
+ export PATH="/Users/brandonmoak/Library/Python/3.9/bin:$PATH"
+
+ mkvenv() {
+     mkdir -p ~/src/virtualenvs
+     virtualenv ~/src/virtualenvs/"$1"
+ }
+
+ workon() {
+   source ~/src/virtualenvs/$1/bin/activate
+ }
+
+ _workon_completion() {
+   local cur=${COMP_WORDS[COMP_CWORD]}
+   local file_dir_list=$(ls ~/src/virtualenvs)  # List items in the target directory
+   COMPREPLY=($(compgen -W "${file_dir_list}" -- "$cur"))
+ }
+
+ complete -F _workon_completion workon
 
 # load catkin_ws (takes the workspace location as an input)
 function load_catkin_ws () {
