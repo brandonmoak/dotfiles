@@ -96,7 +96,7 @@ function load_encfs_utils() {
   # get the unlockrc as an argument
   UNLOCKRC="$1"
 
-  alias cd='HOME=/home/brandon/workspace cd'
+  #alias cd='HOME=/home/brandon/workspace cd'
   DECRYPT_DIR="/home/brandon/workspace"
   ENCRYPT_DIR='/home/brandon/.dropbox-ln/Workspace/brandon-linux'
 
