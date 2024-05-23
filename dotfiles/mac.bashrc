@@ -26,8 +26,8 @@ if [ -f $SCRIPT_DIR/.aliases ]; then
 fi
 
 # aliases
-if [ -f $SCRIPT_DIR/.aws-aliases ]; then
-  source $SCRIPT_DIR/.aws-aliases
+if [ -f $SCRIPT_DIR/../aws/.aws-aliases ]; then
+  source $SCRIPT_DIR/../aws/.aws-aliases
 fi
 
 # configure history (defined in ~/.rcfucntions)
@@ -54,3 +54,13 @@ alias jupytersbox="ssh -N -f -L localhost:8899:localhost:8889 brandon@$SBOXIP; g
 
 source /Users/brandonmoak/.embite/source.sh
 export PATH="/opt/homebrew/bin:$PATH"
+
+# brew
+export C_INCLUDE_PATH=/opt/homebrew/include:/usr/local/include:$C_INCLUDE_PATH
+export CPLUS_INCLUDE_PATH=/opt/homebrew/include:/usr/local/include:$CPLUS_INCLUDE_PATH
+export LIBRARY_PATH=/opt/homebrew/lib:/usr/local/lib:$LIBRARY_PATH
+export DYLD_LIBRARY_PATH=/opt/homebrew/lib:/usr/local/lib:$DYLD_LIBRARY_PATH # for macOS
+
+# cursor
+alias code="/Applications/Cursor.app/Contents/MacOS/Cursor"
+

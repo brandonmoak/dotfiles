@@ -1,0 +1,41 @@
+To enable the 1Password SSH key agent via the command line, you can follow these steps:
+
+1. **Ensure 1Password CLI is Installed:**
+   First, make sure you have the 1Password CLI (command-line interface) installed on your system.
+
+2. **Sign in to 1Password CLI:**
+   Use the following command to sign in:
+   ```
+   op signin [signinaddress] [emailaddress] [secretkey]
+   ```
+   This will authenticate you and start a session.
+
+3. **Enable SSH Agent:**
+   Run the following command to enable the SSH agent:
+   ```
+   eval $(op ssh agent --start)
+   ```
+
+4. **Add SSH Keys to 1Password SSH Agent:**
+   You can add your SSH keys stored in 1Password to the agent using:
+   ```
+   op ssh add --key key-name
+   ```
+   Replace `key-name` with the name of your SSH key in 1Password.
+
+5. **Configure SSH to Use 1Password SSH Agent:**
+   Add the following lines to your SSH configuration file (`~/.ssh/config`):
+   ```
+   Host *
+       IdentityAgent ~/.op/agent.sock
+   ```
+   This tells SSH to use the 1Password SSH agent for key management.
+
+6. **Verify Connection:**
+   Test your SSH connection to ensure it's using the 1Password managed keys:
+   ```
+   ssh username@hostname
+   ```
+   Replace `username` and `hostname` with appropriate values.
+
+With these steps, you should have the 1Password SSH agent set up and ready to manage your SSH keys.
