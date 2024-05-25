@@ -53,3 +53,5 @@ tmux send-keys -t "$session_name" "jupyter notebook --port=${port} --no-browser"
 echo "Jupyter notebook server started in tmux session '$session_name'."
 echo "You can attach to the session with 'tmux attach -t $session_name'."
 echo "To detach again, press 'Ctrl-b d'."
+
+jupyter notebook list
