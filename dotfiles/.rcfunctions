@@ -1,4 +1,10 @@
 # file contains a bunch of functions to be used in the bashrc
+#
+function cx() {
+    echo "copying output to clipboard.."
+    "$@" 2>&1 | tee >(pbcopy)
+
+}
 
 function please() {
    cmd=$(history | cut -c 8- | tail -2 | head -1)
@@ -63,7 +69,7 @@ function add_to_path() {
 
  mkvenv() {
      mkdir -p ~/src/virtualenvs
-     virtualenv ~/src/virtualenvs/"$1"
+     virtualenv -p python3.12 ~/src/virtualenvs/"$1"
  }
 
  workon() {
@@ -313,3 +319,18 @@ load_dropbox_bag_utils() {
   }
 }
 
+jupyter_connect() {
+  read -p "Enter the username: " username
+  read -p "Enter the IP address: " ip_address
+  read -p "Enter the port: " port
+
+  # Check if the input port is a number
+  if ! [[ "$port" =~ ^[0-9]+$ ]]; then
+    echo "Error: Port must be a number."
+    return 1
+  fi
+
+  # Establish SSH tunnel
+  echo "Setting up SSH port forwarding..."
+  ssh -N -L "${port}:localhost:${port}" "${username}@${ip_address}"
+}

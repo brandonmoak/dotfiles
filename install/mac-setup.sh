@@ -47,3 +47,5 @@ case $(ask_install "git completion") in
   no )echo "skipping";;
   * ) echo "invalid... skipping";;
 esac
+
+brew install ripgrep
