@@ -1,5 +1,9 @@
 # file contains a bunch of functions to be used in the bashrc
 #
+function install_venv() {
+    ipython kernel install --user --name=$VIRTUAL_ENV_PROMPT
+}
+
 function cx() {
     echo "copying output to clipboard.."
     "$@" 2>&1 | tee >(pbcopy)
