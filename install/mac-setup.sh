@@ -49,3 +49,4 @@ case $(ask_install "git completion") in
 esac
 
 brew install ripgrep
+brew install llm

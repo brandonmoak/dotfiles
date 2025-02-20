@@ -4,6 +4,9 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
+# llm
+alias ask="llm -t cli"
+
 # tmux
 alias tmux="tmux -2"
 alias ta="tmux attach -t"
@@ -23,6 +26,10 @@ alias powerlow='sudo pm-powersave true'
 alias powerhigh='sudo pm-powersave false'
 
 # general linux
+DOTFILES="~/src/dotfiles"
+alias cdot="cd ${DOTFILES}"
+alias vimfn="vim ${DOTFILES}/dotfiles/.rcfunctions"
+alias vimas="vim ${DOTFILES}/dotfiles/.aliases"
 alias sourcerc="source ~/.bashrc"
 alias vimrc="vim ~/.bashrc; sourcerc"
 alias chrome='google-chrome'

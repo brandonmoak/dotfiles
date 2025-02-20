@@ -1,7 +1,8 @@
 # file contains a bunch of functions to be used in the bashrc
 #
 function install_venv() {
-    ipython kernel install --user --name=$VIRTUAL_ENV_PROMPT
+    pip show ipykernel > /dev/null 2>&1 || pip install ipykernel
+    python -m ipykernel install --user --name=$VIRTUAL_ENV_PROMPT
 }
 
 function cx() {
@@ -71,9 +72,14 @@ function add_to_path() {
  # virtual environment
  export PATH="/Users/brandonmoak/Library/Python/3.9/bin:$PATH"
 
- mkvenv() {
+ mkvenv3.12() {
      mkdir -p ~/src/virtualenvs
      virtualenv -p python3.12 ~/src/virtualenvs/"$1"
+ }
+
+ mkvenv3.10() {
+     mkdir -p ~/src/virtualenvs
+     virtualenv -p python3.10 ~/src/virtualenvs/"$1"
  }
 
  workon() {
