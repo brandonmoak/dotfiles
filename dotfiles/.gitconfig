@@ -3,20 +3,29 @@
     ci = commit
     co = checkout
     br = branch
+    last = log -1 HEAD
     unstage = reset HEAD --
     undo-commit = reset --soft HEAD~1
-    last = log -1 HEAD
-    smart-message = "!f() { git diff --cached | llm --system 'Write a concise and clear Git commit message based on the following staged changes:'; }; f"
-    smart-commit = "!f() { \
+    llm-describe= "!f() { \
       diff=$(git diff --cached); \
       if [ -z \"$diff\" ]; then echo '❌ No staged changes.'; exit 1; fi; \
-      msg=$(echo \"$diff\" | llm --system 'Write a concise Git commit message for these staged changes:'); \
+      llm_message='Write a clear and concise Git commit message for these staged changes:'; \
+      echo \"$diff\" | llm --system \"$llm_message\"; \
+    }; f"
+    llm-commit = "!f() { \
+      diff=$(git diff --cached); \
+      if [ -z \"$diff\" ]; then echo '❌ No staged changes.'; exit 1; fi; \
       tmpfile=$(mktemp); \
-      echo \"$msg\" > \"$tmpfile\"; \
-      ${EDITOR:-vim} \"$tmpfile\" || exit 1; \
+      echo \"\" > \"$tmpfile\"; \
+      echo 'thinking about changes...'; \
+      llm_msg=$(git llm-describe); \
+      echo \"$llm_msg\"; \
+      esc_msg=$(printf %q \"$llm_msg\"); \
+      ${EDITOR:-vim} +\"normal i$llm_msg\" \"$tmpfile\" || exit 1; \
       final_msg=$(cat \"$tmpfile\"); \
-      rm \"$tmpfile\"; \
+      if [ -z \"$final_msg\" ]; then echo '❌ Commit aborted: empty message.'; rm \"$tmpfile\"; exit 1; fi; \
       git commit -m \"$final_msg\"; \
+      rm \"$tmpfile\"; \
     }; f"
 [user]
     name = brandonmoak
