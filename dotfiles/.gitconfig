@@ -4,12 +4,25 @@
     co = checkout
     br = branch
     unstage = reset HEAD --
+    undo-commit = reset --soft HEAD~1
     last = log -1 HEAD
+    smart-message = "!f() { git diff --cached | llm --system 'Write a concise and clear Git commit message based on the following staged changes:'; }; f"
+    smart-commit = "!f() { \
+      diff=$(git diff --cached); \
+      if [ -z \"$diff\" ]; then echo '❌ No staged changes.'; exit 1; fi; \
+      msg=$(echo \"$diff\" | llm --system 'Write a concise Git commit message for these staged changes:'); \
+      tmpfile=$(mktemp); \
+      echo \"$msg\" > \"$tmpfile\"; \
+      ${EDITOR:-vim} \"$tmpfile\" || exit 1; \
+      final_msg=$(cat \"$tmpfile\"); \
+      rm \"$tmpfile\"; \
+      git commit -m \"$final_msg\"; \
+    }; f"
 [user]
-	name = brandonmoak
-	email = brandon@embarktrucks.com
+    name = brandonmoak
+    email = developer@bmoak.com
 [filter "lfs"]
-	process = git-lfs filter-process
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
