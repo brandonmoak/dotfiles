@@ -3,6 +3,9 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
+alias cdg='cd $(git rev-parse --show-toplevel)'
+alias cdz='cd -'
+alias cds='cd ~/src'
 
 # llm
 alias ask="llm -t cli"

@@ -50,3 +50,4 @@ esac
 
 brew install ripgrep
 brew install llm
+brew install reattach-to-user-namespace
