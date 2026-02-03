@@ -366,3 +366,54 @@ jupyter_connect() {
   echo "Setting up SSH port forwarding..."
   ssh -N -L "${port}:localhost:${port}" "${username}@${ip_address}"
 }
+
+open_chrome_profile() {
+    local PROFILE_NAME="$1"
+    local URL="$2"
+    local CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    local CHROME_DIR="$HOME/Library/Application Support/Google/Chrome"
+
+    if [ -z "$PROFILE_NAME" ] || [ -z "$URL" ]; then
+        echo "Usage: $0 \"Profile Name\" \"URL\""
+        return 1
+    fi
+
+    # Find the profile directory that matches the given name
+    local PROFILE_DIR=""
+    for dir in "$CHROME_DIR"/*/; do
+        if [ -f "$dir/Preferences" ]; then
+            local profile_dir_name=$(basename "$dir")
+            local profile_name=$(python3 -c "import json, sys; data=json.load(open('$dir/Preferences')); print(data.get('profile', {}).get('name', ''))" 2>/dev/null)
+
+            if [ "$profile_name" = "$PROFILE_NAME" ]; then
+                PROFILE_DIR="$profile_dir_name"
+                break
+            fi
+        fi
+    done
+
+    if [ -z "$PROFILE_DIR" ]; then
+        echo "Error: Profile '$PROFILE_NAME' not found"
+        echo ""
+        echo "Available profiles:"
+        for dir in "$CHROME_DIR"/*/; do
+            if [ -f "$dir/Preferences" ]; then
+                local profile_name=$(python3 -c "import json; data=json.load(open('$dir/Preferences')); print(data.get('profile', {}).get('name', ''))" 2>/dev/null)
+                if [ -n "$profile_name" ]; then
+                    echo "  - $profile_name"
+                fi
+            fi
+        done
+        return 1
+    fi
+
+    # Check if Chrome with this profile is running
+    if pgrep -f "profile-directory=$PROFILE_DIR" > /dev/null; then
+        # Profile is running, open in new tab
+        open -g "$URL"
+    else
+        # Profile not running, start new window
+        open -na "Google Chrome" --args --profile-directory="$PROFILE_DIR" "$URL"
+    fi
+}
+
