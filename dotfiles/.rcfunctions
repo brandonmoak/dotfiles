@@ -5,6 +5,13 @@ function install_venv() {
     python -m ipykernel install --user --name=$VIRTUAL_ENV_PROMPT
 }
 
+# worktree helpers
+WORKTREE_DIR="$HOME/src/worktrees"
+wt-cd() {
+    local repo=$(basename $(git rev-parse --show-toplevel))
+    cd $WORKTREE_DIR/${repo}/${1}
+}
+
 # function to add an include path in the gitconfig
 add_gitconfig_include() {
   local include_path="$1"
@@ -189,12 +196,11 @@ gitbranch() {
     local branch=""
     local headfile="$gitdir/HEAD"
 
-    # check to see if we are in a submodule
+
     if [ ! -f "$gitdir/HEAD" ]; then
-        # read the .git file to find the real .git folder
-        dot_git=$(<"$gitdir")
-        # read in the location of the actual .git folder
-        headfile=$repo/$(sed -e 's#.*\ \(\)#\1#' <<< "$dot_git")/HEAD
+        local dot_git=$(<"$gitdir")
+        local real_gitdir="${dot_git#gitdir: }"
+        headfile="$real_gitdir/HEAD"
     fi
 
     read head < "$headfile"
