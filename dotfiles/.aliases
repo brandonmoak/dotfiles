@@ -6,6 +6,8 @@ alias .....='cd ../../../..'
 alias cdg='cd $(git rev-parse --show-toplevel)'
 alias cdz='cd -'
 alias cds='cd ~/src'
+alias cdd='cd ~/Desktop'
+alias cdw='cd ~/src/worktrees'
 
 # llm
 alias ask="llm -t cli"
@@ -35,7 +37,8 @@ alias vimfn="vim ${DOTFILES}/dotfiles/.rcfunctions"
 alias vimas="vim ${DOTFILES}/dotfiles/.aliases"
 alias sourcerc="source ~/.bashrc"
 alias vimrc="vim ~/.bashrc; sourcerc"
-alias chrome='google-chrome'
+alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+#alias chrome='google-chrome'
 alias launch='xdg-open'
 alias suspend='systemctl suspend -i'
 

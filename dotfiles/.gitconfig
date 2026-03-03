@@ -28,6 +28,11 @@
       git commit -m \"$final_msg\"; \
       rm \"$tmpfile\"; \
     }; f"
+      wt-add   = "!f() { common=$(git rev-parse --git-common-dir); if [ \"${common#/}\" = \"$common\" ]; then common=$(git rev-parse --show-toplevel)/$common; fi; repo=$(basename $(dirname \"$common\")); path=~/src/worktrees/${repo}/${1}; git worktree add ${path} ${1} && echo ${path}; }; f"
+      wt-new   = "!f() { common=$(git rev-parse --git-common-dir); if [ \"${common#/}\" = \"$common\" ]; then common=$(git rev-parse --show-toplevel)/$common; fi; repo=$(basename $(dirname \"$common\")); path=~/src/worktrees/${repo}/${1}; git worktree add -b ${1} ${path} ${2:-HEAD} && echo ${path}; }; f"
+      wt-ls    = worktree list
+      wt-rm    = "!f() { common=$(git rev-parse --git-common-dir); if [ \"${common#/}\" = \"$common\" ]; then common=$(git rev-parse --show-toplevel)/$common; fi; repo=$(basename $(dirname \"$common\")); git worktree remove ~/src/worktrees/${repo}/${1}; }; f"
+      wt-prune = worktree prune -v
 [user]
     name = brandonmoak
     email = developer@bmoak.com

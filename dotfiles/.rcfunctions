@@ -7,9 +7,14 @@ function install_venv() {
 
 # worktree helpers
 WORKTREE_DIR="$HOME/src/worktrees"
-wt-cd() {
-    local repo=$(basename $(git rev-parse --show-toplevel))
-    cd $WORKTREE_DIR/${repo}/${1}
+
+cdwt() {
+  local path=$(git worktree list --porcelain | grep -B2 "branch refs/heads/${1}$" | grep "^worktree" | cut -d' ' -f2)
+  if [ -n "$path" ]; then
+      cd "$path"
+  else
+      echo "No worktree found for branch: ${1}"
+  fi
 }
 
 # function to add an include path in the gitconfig
