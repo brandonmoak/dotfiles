@@ -204,9 +204,17 @@ gitbranch() {
     export GITBRANCH="$branch"
 }
 
+# encrypted environment pack helpers
+_ep_bash="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../envpacks/ep.bash"
+if [[ -f "$_ep_bash" ]]; then
+    source "$_ep_bash"
+fi
+unset _ep_bash
+
 # my prompt
 PS1_green='\[\e[32m\]'
 PS1_blue='\[\e[34m\]'
+PS1_cyan='\[\e[36m\]'
 PS1_reset='\[\e[0m\]'
 _mk_prompt() {
     # Change the window title of X terminals
@@ -240,6 +248,10 @@ _mk_prompt() {
     gitbranch
     if [[ ! -z "$GITBRANCH" ]]; then
         prefix+=("${PS1_green}$GITBRANCH${PS1_reset}")
+    fi
+
+    if [[ ! -z "${ENVPACK_ACTIVE-}" ]]; then
+        prefix+=("${PS1_cyan}ep:$ENVPACK_ACTIVE${PS1_reset}")
     fi
 
     local virtualenv="${VIRTUAL_ENV##*/}"

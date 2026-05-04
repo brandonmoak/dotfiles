@@ -1,0 +1,8 @@
+# Example only. Real env packs live in ~/.config/envpacks/packs and are edited
+# with `ep edit <pack>`, which stores them encrypted with sops + age.
+name: cloud/example
+description: Example encrypted environment pack
+extends: cloud/base
+env:
+  EXAMPLE_API_URL: https://api.example.com
+  EXAMPLE_API_KEY: replace-me

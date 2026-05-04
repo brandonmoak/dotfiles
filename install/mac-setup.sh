@@ -53,3 +53,5 @@ brew install ripgrep
 brew install llm
 brew install reattach-to-user-namespace
 brew install shellenv
+brew install sops
+brew install age
