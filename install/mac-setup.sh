@@ -22,6 +22,7 @@ case $(ask_install "brew") in
     export PATH=/opt/homebrew/bin:$PATH
     echo 'PATH="/opt/homebrew/bin:$PATH"' >> ~/.bashrc
     echo 'PATH="/opt/homebrew/bin:$PATH"' >> ~/.zshrc
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.bash_profile
     echo "done";;
   no )echo "skipping";;
   * ) echo "invalid... skipping";;
@@ -51,3 +52,4 @@ esac
 brew install ripgrep
 brew install llm
 brew install reattach-to-user-namespace
+brew install shellenv
