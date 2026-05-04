@@ -103,30 +103,8 @@ function add_to_path() {
   export PATH=$PATH:$1
 }
 
- # virtual environment
- export PATH="/Users/brandonmoak/Library/Python/3.9/bin:$PATH"
-
- mkvenv3.12() {
-     mkdir -p ~/src/virtualenvs
-     virtualenv -p python3.12 ~/src/virtualenvs/"$1"
- }
-
- mkvenv3.10() {
-     mkdir -p ~/src/virtualenvs
-     virtualenv -p python3.10 ~/src/virtualenvs/"$1"
- }
-
- workon() {
-   source ~/src/virtualenvs/$1/bin/activate
- }
-
- _workon_completion() {
-   local cur=${COMP_WORDS[COMP_CWORD]}
-   local file_dir_list=$(ls ~/src/virtualenvs)  # List items in the target directory
-   COMPREPLY=($(compgen -W "${file_dir_list}" -- "$cur"))
- }
-
- complete -F _workon_completion workon
+# virtual environment
+export PATH="/Users/brandonmoak/Library/Python/3.9/bin:$PATH"
 
 # load catkin_ws (takes the workspace location as an input)
 function load_catkin_ws () {
